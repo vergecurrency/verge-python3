@@ -5,6 +5,7 @@ Test script
 Only on the test network.
 '''
 import argparse
+import os
 import sys
 sys.path.append('../src')
 
@@ -20,10 +21,16 @@ parser.add_argument('--nolocal', help="Don't use connect_to_local",
                     action='store_true')
 parser.add_argument('--noremote', help="Don't use connect_to_remote",
                     action='store_true')
+parser.add_argument('--envconfig', help="Configure through environment variables, see Test.rst",
+                    action='store_true')					
 args = parser.parse_args()
 
-if __name__ == "__main__":
-
+def get_local_connections():
+    """
+    Return connections from local configuration files
+    """
+    # The default cases, read the local or a specific VERGEd
+    # configuration file
     if args.config:
         from vergerpc.config import read_config_file
         cfg = read_config_file(args.config)
@@ -32,7 +39,6 @@ if __name__ == "__main__":
         cfg = read_default_config(None)
     port = int(cfg.get('rpcport', '20102'))
     rpcuser = cfg.get('rpcuser', '')
-
     connections = []
     if not args.nolocal:
         local_conn = vergerpc.connect_to_local()  # will use read_default_config
@@ -42,7 +48,34 @@ if __name__ == "__main__":
                 user=rpcuser, password=cfg['rpcpassword'], host='localhost',
                 port=port, use_https=False)
         connections.append(remote_conn)
+	return connections
 
+def get_environment_connections():
+    """
+    Return connections from environment variables
+    """
+    host = os.environ['HOST']
+    passwd = os.environ['PASS']
+    user1 = os.environ['USER1']
+    user2 = os.environ['USER2']
+    port1 = int(os.environ['PORT1'])
+    port2 = int(os.environ['PORT2'])
+    connections = (
+        vergerpc.connect_to_remote(user=user1, password=passwd,
+                                     host=host, port=port1, use_https=False),
+        vergerpc.connect_to_remote(user=user2, password=passwd,
+                                     host=host, port=port2, use_https=False),
+    )
+    return connections
+	
+	def get_connections():
+    if args.envconfig:
+        return get_environment_connections()
+    else:
+        return get_local_connections()
+
+if __name__ == "__main__":
+    connections = get_connections()
     for conn in connections:
         assert(conn.getinfo().testnet) # don't test on prodnet
 

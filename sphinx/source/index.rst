@@ -12,13 +12,14 @@ Contents:
 
    gettingstarted.rst
    apireference.rst
+   testing.rst
 
-Indices and tables
+Indexes and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
 
-.. _verge: http://vergecurrency.com/
+.. _verge: https://vergecurrency.com/
 
