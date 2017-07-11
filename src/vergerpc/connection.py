@@ -324,6 +324,18 @@ class VERGEConnection(object):
             keys that, if given, will be the only keys used to sign the transaction.
         """
         return dict(self.proxy.signrawtransaction(hexstring, previous_transactions, private_keys))
+	
+	def sendrawtransaction(self, hexstring):
+        """
+        Submits raw transaction (serialized, hex-encoded) to local node and network. 
+
+        Returns a txid
+
+        Arguments:
+
+        - *hexstring* -- A hex string of the transaction to be decoded.
+        """
+        return self.proxy.sendrawtransaction(hexstring)
 
     def decoderawtransaction(self, hexstring):
         """
