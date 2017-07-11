@@ -17,5 +17,6 @@ setup(
         'Topic :: Office/Business :: Financial'
     ],
     packages=find_packages("src"),
+	install_requires=['simplejson>=3.8.0'],
     package_dir={'': 'src'}
 )
