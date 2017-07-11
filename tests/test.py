@@ -68,7 +68,7 @@ def get_environment_connections():
     )
     return connections
 	
-	def get_connections():
+    def get_connections():
     if args.envconfig:
         return get_environment_connections()
     else:
