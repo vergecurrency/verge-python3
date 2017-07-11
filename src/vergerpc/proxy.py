@@ -90,7 +90,7 @@ class HTTPTransport(object):
         if httpresp is None:
             self._raise_exception({
                 'code': -342, 'message': 'missing HTTP response from server'})
-       elif httpresp.status == http.client.FORBIDDEN:
+        elif httpresp.status == http.client.FORBIDDEN:
             msg = "verged returns 403 Forbidden. Is your IP allowed?"
             raise TransportException(msg, code=403,
                                      protocol=self.parsed_url.scheme,
