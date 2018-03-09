@@ -19,10 +19,11 @@
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 """
 
-try:
-    import http.client as httplib
-except ImportError:
-    import httplib # python2
+#try:
+#    import http.client as httplib
+#except ImportError:
+#    import httplib # python2
+import http.client
 import base64
 import simplejson as json
 import decimal
