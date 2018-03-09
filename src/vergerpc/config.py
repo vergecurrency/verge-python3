@@ -28,19 +28,13 @@ def read_config_file(filename):
     Raises :const:`IOError` if unable to open file, or :const:`ValueError`
     if an parse error occurs.
     """
-    f = open(filename)
-    try:
-        cfg = {}
-        for line in f:
+    cfg = {}
+    with open(filename, 'r') as f:
+        for line in f.readlines():
             line = line.strip()
-            if line and not line.startswith("#"):
-                try:
-                    (key, value) = line.split('=', 1)
-                    cfg[key] = value
-                except ValueError:
-                    pass  # Happens when line has no '=', ignore
-    finally:
-        f.close()
+            if '=' in line and not line.startswith('#'):
+                key, value = map(str.strip, line.split('=', 1))
+                cfg[key] = value
     return cfg
 
 
@@ -55,7 +49,7 @@ def read_default_config(filename=None):
     if filename is None:
         import os
         import platform
-        home = os.getenv("HOME")
+        home = os.path.expanduser("~")
         if not home:
             raise IOError("Home directory not defined, don't know where to look for config file")
 
