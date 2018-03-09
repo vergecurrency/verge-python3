@@ -33,7 +33,7 @@ def read_config_file(filename):
         for line in f.readlines():
             line = line.strip()
             if '=' in line and not line.startswith('#'):
-                key, value = map(str.strip, line.split('='))
+                key, value = map(str.strip, line.split('=', 1))
                 cfg[key] = value
     return cfg
 
