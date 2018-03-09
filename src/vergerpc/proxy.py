@@ -85,7 +85,7 @@ class HTTPTransport(object):
                 return self.request(serialized_data, retry=False)
             raise
 
-			
+            
         httpresp = self.connection.getresponse()
         if httpresp is None:
             self._raise_exception({
