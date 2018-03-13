@@ -1,9 +1,9 @@
 language: python
 python:
 #- 2.5
-- 2.6
-- 2.7
-#- 3.3
+#- 2.6
+#- 2.7
+- 3.3
 install:
   - if [[ $TRAVIS_PYTHON_VERSION < '2.7' ]]; then pip install -q --use-mirrors argparse; fi
   - python setup.py install -q
