@@ -48,7 +48,7 @@ def get_local_connections():
                 user=rpcuser, password=cfg['rpcpassword'], host='localhost',
                 port=port, use_https=False)
         connections.append(remote_conn)
-	return connections
+    return connections
 
 def get_environment_connections():
     """
