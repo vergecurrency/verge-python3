@@ -324,8 +324,8 @@ class VERGEConnection(object):
             keys that, if given, will be the only keys used to sign the transaction.
         """
         return dict(self.proxy.signrawtransaction(hexstring, previous_transactions, private_keys))
-	
-	def sendrawtransaction(self, hexstring):
+    
+    def sendrawtransaction(self, hexstring):
         """
         Submits raw transaction (serialized, hex-encoded) to local node and network. 
 
@@ -628,8 +628,8 @@ class VERGEConnection(object):
         Arguments:
 
         - *privkey* -- private key to import.
-	- [acct] -- name of account to associate with private key
-	- [rescan] -- rescan blockchain for transcations containing altcoin address associated with privkey
+    - [acct] -- name of account to associate with private key
+    - [rescan] -- rescan blockchain for transcations containing altcoin address associated with privkey
         """
         return self.proxy.importprivkey(privkey, acct, rescan)
 
