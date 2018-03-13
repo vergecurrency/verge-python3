@@ -58,12 +58,17 @@ class HTTPTransport(object):
         authpair = authpair.encode('utf8')
         self.auth_header = "Basic ".encode('utf8') + base64.b64encode(authpair)
         if self.parsed_url.scheme == 'https':
-            self.connection = http.client.HTTPSConnection(self.parsed_url.hostname,
-                                                      port, None, None, False,
-                                                      HTTP_TIMEOUT)
+            self.connection = http.client.HTTPSConnection(host=self.parsed_url.hostname,
+                                                          port=port,
+                                                          key_file=None, 
+                                                          cert_file=None, 
+                                                          source_address=False,
+                                                          timeout=HTTP_TIMEOUT)
         else:
-            self.connection = http.client.HTTPConnection(self.parsed_url.hostname,
-                                                     port, False, HTTP_TIMEOUT)
+            self.connection = http.client.HTTPConnection(host=self.parsed_url.hostname,
+                                                         port=port,
+                                                         timeout=HTTP_TIMEOUT,
+                                                         source_address=False) 
 
     def request(self, serialized_data, retry=True):
         try:
