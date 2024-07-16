@@ -6,7 +6,13 @@ ____   _________________________   ________ ___________
    \___/   /_______  / |____|_  / \______  //_______  /
                    \/         \/         \/         \/ 
 ```
-[![Build Status](https://travis-ci.org/vergecurrency/verge-python3.svg?branch=master)](https://travis-ci.org/vergecurrency/verge-python3)
+<p align="left">
+  <a href="https://github.com/vergecurrency/verge-python3/actions/workflows/python-app.yml">
+  <img src="https://github.com/vergecurrency/verge-python3/actions/workflows/python-app.yml/badge.svg">
+  </a>
+</p>
+
+
 # A Python3 library for the VERGE Client
 This is a set of Python libraries that allows easy access to the
 VERGE peer-to-peer cryptocurrency client API.
