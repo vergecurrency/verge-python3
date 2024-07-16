@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name='verge-python3',
-    version='0.1.4',
+    version='1.0',
     description='Friendly VERGE JSON-RPC API binding for Python3',
     long_description='This package allows performing commands such as listing the current balance'
     ' and sending coins to the verge client from Python3. The communication with the'
