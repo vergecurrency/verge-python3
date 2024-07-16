@@ -23,7 +23,7 @@ VERGE peer-to-peer cryptocurrency client API.
 Installation instructions
 ===========================
 
-verge-python3 uses setuptools for the install script. There are no dependencies apart from Python3 itself.
+verge-python3 uses setuptools for the install script.
 
 ```
   $ python3 setup.py build
@@ -32,9 +32,10 @@ verge-python3 uses setuptools for the install script. There are no dependencies 
 
 Connection to verge-qt
 =========================
-```
+
 If you want to connect to verge-qt, add server=1 in your VERGE.conf:
 
+```
  rpcuser=vergerpcuser
  rpcpassword=randompassword
  server=1
