@@ -25,8 +25,6 @@ Installation instructions
 
 verge-python3 uses setuptools for the install script. There are no dependencies apart from Python3 itself.
 
-::
-
 ```
   $ python3 setup.py build
   $ python3 setup.py install
@@ -35,13 +33,13 @@ verge-python3 uses setuptools for the install script. There are no dependencies 
 Connection to verge-qt
 =========================
 ```
-If you want to connect to verge-qt, add server=1 in your VERGE.conf
-::
+If you want to connect to verge-qt, add server=1 in your VERGE.conf:
 
  rpcuser=vergerpcuser
  rpcpassword=randompassword
  server=1
 ```
+
 TODO
 ======
 
@@ -50,5 +48,6 @@ These things still have to be added:
 
 - SSL support (including certificate verification) for managing remote verge daemons.
 
-verge-python3 is a fork of bitcoin-python : https://github.com/laanwj/bitcoin-python
+verge-python3 is a fork of bitcoin-python, which was originally created by the very 
+talented and widely loved, Wladimir van der Laan. 
 ```
