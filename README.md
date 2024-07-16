@@ -4,7 +4,7 @@ ____   _________________________   ________ ___________
  \   Y   /  |    __)_  |       _//   \  ___  |    __)_ 
   \     /   |        \ |    |   \\    \_\  \ |        \ 2024 VERGE
    \___/   /_______  / |____|_  / \______  //_______  /
-                   \/         \/         \/         \/ 
+                   \/         \/         \/     $XVG\/ 
 ```
 <p align="left">
   <a href="https://github.com/vergecurrency/verge-python3/actions/workflows/python-app.yml">
