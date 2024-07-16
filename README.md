@@ -21,19 +21,11 @@ verge-python3 uses setuptools for the install script. There are no dependencies 
 
 ::
 
-  $ python setup.py build
-  $ python setup.py install
-  
+```
+  $ python3 setup.py build
+  $ python3 setup.py install
+```  
 
-Pypi / Cheeseshop (coming soon)
-==================
-```
-It is possible to install the package through Pypi (cheeseshop), see http://pypi.python.org/pypi?:action=display&name=verge-python3
-::
- $ pip install verge-python3
- # if not working, try
- $ pip install --pre verge-python3
-```
 Connection to verge-qt
 =========================
 ```
