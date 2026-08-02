@@ -1,71 +1,188 @@
 ```
 ____   _________________________   ________ ___________
 \   \ /   /\_   _____/\______   \ /  _____/ \_   _____/
- \   Y   /  |    __)_  |       _//   \  ___  |    __)_ 
-  \     /   |        \ |    |   \\    \_\  \ |        \ 2024 VERGE
+ \   Y   /  |    __)_  |       _//   \  ___  |    __)_
+  \     /   |        \ |    |   \\    \_\  \ |        \ 2026 VERGE
    \___/   /_______  / |____|_  / \______  //_______  /
-                   \/         \/         \/     $XVG\/ 
+                   \/         \/         \/     $XVG\/
 ```
-<p align="left">
-  <a href="https://github.com/vergecurrency/verge-python3/actions/workflows/python-app.yml">
-  <img src="https://github.com/vergecurrency/verge-python3/actions/workflows/python-app.yml/badge.svg">
-  </a>
-</p>
 
+[![Python](https://github.com/vergecurrency/verge-python3/actions/workflows/python-app.yml/badge.svg)](https://github.com/vergecurrency/verge-python3/actions/workflows/python-app.yml)
 
-# A Python 3 library for Verge Core
+# Verge Core Python 3 binding
 
-This package provides a friendly JSON-RPC binding for Verge Core v26.7,
-including its complete Secure Messaging (SMSG) RPC surface. Deprecated account
-RPCs and obsolete mining RPCs are intentionally not exposed.
+`verge-python3` is a Python JSON-RPC client for
+[Verge Core v26.7](https://github.com/vergecurrency/verge/releases/tag/v26.7).
+It includes the complete v26.7 Secure Messaging (SMSG) RPC surface. Deprecated
+account APIs, `getinfo`, `signrawtransaction`, and obsolete mining RPCs are
+intentionally not exposed.
 
-(note: for python 2.7 support, please see https://github.com/vergecurrency/verge-python)
+## Requirements
 
+- Python 3.10 or newer
+- A running Verge Core v26.7 wallet or daemon with JSON-RPC enabled
+- Python 3.14 for the same runtime used by the integration workflow
+
+CI tests Python 3.10 through 3.14 and runs the binding against the official
+v26.7 `verged` Ubuntu AppImage.
 
 ## Installation
 
-Python 3.10 or newer is required. Python 3.14 is tested in CI.
+From a checkout of this repository:
 
-```
+```console
 python -m pip install .
-```  
-
-## Connection to verge-qt
-
-If you want to connect to verge-qt, add server=1 in your VERGE.conf:
-
 ```
-rpcuser=vergerpcuser
-rpcpassword=randompassword
+
+For development and testing:
+
+```console
+python -m pip install -e ".[test]"
+```
+
+## Configure Verge Core
+
+Add RPC credentials to `VERGE.conf`. Verge Qt also requires `server=1`:
+
+```ini
 server=1
+rpcuser=vergerpcuser
+rpcpassword=replace-with-a-long-random-password
 ```
+
+Do not expose the RPC port to untrusted networks. `verged` disables SMSG by
+default; start it with `-smsg=1` or add the following when SMSG access is
+required:
+
+```ini
+smsg=1
+```
+
+Restart Verge Core after changing its configuration.
+
+## Connect and call RPC methods
+
+Connect using explicit credentials:
 
 ```python
 import vergerpc
 
 rpc = vergerpc.connect_to_remote(
     user="vergerpcuser",
-    password="randompassword",
+    password="replace-with-a-long-random-password",
+    host="127.0.0.1",
     port=20102,
 )
-print(rpc.getblockchaininfo())
-print(rpc.smsginfo())
+
+chain = rpc.getblockchaininfo()
+network = rpc.getnetworkinfo()
+
+print("Chain:", chain["chain"])
+print("Blocks:", chain["blocks"])
+print("Connections:", network["connections"])
 ```
+
+For a local Verge Core instance, the binding can read the standard
+`VERGE.conf` location:
+
+```python
+import vergerpc
+
+rpc = vergerpc.connect_to_local()
+print(rpc.getwalletinfo())
+```
+
+Pass a configuration path when the file is in a nonstandard location:
+
+```python
+rpc = vergerpc.connect_to_local("/path/to/VERGE.conf")
+```
+
+## Labels and addresses
+
+The deprecated account API has been replaced by labels:
+
+```python
+address = rpc.getnewaddress("customer-42")
+rpc.setlabel(address, "customer-42")
+
+print(rpc.getaddressesbylabel("customer-42"))
+print(rpc.getreceivedbyaddress(address, minconf=1))
+```
+
+## Secure Messaging
+
+With SMSG enabled:
+
+```python
+status = rpc.smsginfo()
+address = rpc.getnewaddress("messages")
+
+rpc.smsgaddlocaladdress(address)
+chatkey = rpc.smsggetpubkey(address)
+
+print(status)
+print(chatkey["chatkey"])
+```
+
+Import a recipient's shared chatkey, then send a paid message:
+
+```python
+shared_chatkey = "RECIPIENT_ADDRESS-RECIPIENT_PUBLIC_KEY"
+recipient_address, recipient_pubkey = shared_chatkey.split("-", 1)
+rpc.smsgaddaddress(recipient_address, recipient_pubkey)
+
+result = rpc.smsgsend(
+    address_from=address,
+    address_to=recipient_address,
+    message="Hello from Python",
+    paid_msg=True,
+    days_retention=7,
+)
+print(result)
+```
+
+The wallet must contain enough confirmed XVG to fund a paid message.
 
 ## Testing
 
-Unit tests run with `python -m pytest`. The GitHub Actions integration job
-downloads the official Verge Core v26.7 Ubuntu AppImage, starts `verged` on
-regtest with SMSG enabled, verifies every exposed method through daemon help,
-and performs blockchain, wallet, address, label, and SMSG smoke tests.
+Run the local unit suite:
 
-## TODO
-
+```console
+python -m pytest
 ```
-These things still have to be added:
 
-- SSL support (including certificate verification) for managing remote verge daemons.
+The GitHub Actions integration job downloads the official v26.7 Ubuntu
+AppImages, starts `verged` on regtest with SMSG enabled, confirms that every
+exposed binding method exists in daemon help, and exercises blockchain, wallet,
+address, label, and SMSG calls. Pytest output capture is disabled for this job,
+so RPC responses are visible in its Actions log.
 
-verge-python3 is a fork of bitcoin-python, which was originally created by the very 
-talented and widely loved, Wladimir van der Laan. 
+To test an existing v26.7 daemon, set the integration environment variables
+and run the daemon test:
+
+```bash
+VERGE_INTEGRATION=1 \
+VERGE_RPC_USER=vergerpcuser \
+VERGE_RPC_PASSWORD=replace-with-a-long-random-password \
+VERGE_RPC_PORT=20102 \
+python -m pytest tests/test_verged_v26_7.py -v -s
 ```
+
+PowerShell:
+
+```powershell
+$env:VERGE_INTEGRATION = "1"
+$env:VERGE_RPC_USER = "vergerpcuser"
+$env:VERGE_RPC_PASSWORD = "replace-with-a-long-random-password"
+$env:VERGE_RPC_PORT = "20102"
+python -m pytest tests/test_verged_v26_7.py -v -s
+```
+
+The integration test requires a regtest daemon with SMSG enabled and must never
+be pointed at a production wallet.
+
+## Project history
+
+`verge-python3` is derived from `bitcoin-python`, originally created by
+Wladimir van der Laan.
