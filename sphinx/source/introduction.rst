@@ -18,7 +18,7 @@ documentation page:
     from jsonrpc import ServiceProxy
     
     access = ServiceProxy("http://user:password@127.0.0.1:20102")
-    access.getinfo()
+    access.getblockchaininfo()
     access.listreceivedbyaddress(6)
     access.sendtoaddress("11yEmxiMso2RsFVfBcCa616npBvGgxiBX", 1000)
 
@@ -36,9 +36,8 @@ compared to a raw ``jsonrpc`` based approach are:
 
 - Documentation in Pythonish format. You are reading this right now.
 
-- The functions 
-  :func:`~vergerpc.connection.VERGEConnection.getinfo`, :func:`~vergerpc.connection.VERGEConnection.listreceivedbyaccount`,
-  :func:`~vergerpc.connection.VERGEConnection.listreceivedbyaddress`, 
+- The functions
+  :func:`~vergerpc.connection.VERGEConnection.listreceivedbyaddress`,
   :func:`~vergerpc.connection.VERGEConnection.listtransactions` and more return actual Python objects, instead of simply
   dictionaries. This makes for cleaner code, as the fields can simply be addressed with ``x.foo`` instead of 
   ``x['foo']``.

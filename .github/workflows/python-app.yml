@@ -1,42 +1,76 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
-name: Python application
+name: Python
 
 on:
   push:
-    branches: [ "master" ]
   pull_request:
-    branches: [ "master" ]
 
 permissions:
   contents: read
 
 jobs:
-  build:
-
+  unit:
     runs-on: ubuntu-latest
-
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: Lint with flake8
-      run: |
-        # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-    - name: build
-      run: |
-        python3 setup.py build
-    - name: install
-      run: |
-        python3 setup.py install
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e ".[test]"
+      - run: python -m pytest
+
+  verge-26-7:
+    runs-on: ubuntu-24.04
+    env:
+      VERGE_INTEGRATION: "1"
+      VERGE_RPC_USER: integration
+      VERGE_RPC_PASSWORD: integration-secret
+      VERGE_RPC_PORT: "21102"
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e ".[test]"
+      - name: Download Verge Core v26.7
+        run: |
+          curl --fail --location --retry 3 \
+            --output verge-v26.7.zip \
+            https://github.com/vergecurrency/verge/releases/download/v26.7/verge-ubuntu24-appimages.zip
+          unzip -q verge-v26.7.zip -d verge-v26.7
+          find verge-v26.7 -type f -name '*.AppImage' -exec chmod +x {} +
+      - name: Start v26.7 regtest daemon with SMSG
+        run: |
+          VERGED="$(find verge-v26.7 -type f -iname '*verged*.AppImage' | head -n 1)"
+          test -n "$VERGED"
+          mkdir -p "$RUNNER_TEMP/verge-data"
+          "$VERGED" --appimage-extract-and-run \
+            -regtest -daemon -smsg=1 -listen=0 \
+            -datadir="$RUNNER_TEMP/verge-data" \
+            -rpcuser="$VERGE_RPC_USER" \
+            -rpcpassword="$VERGE_RPC_PASSWORD" \
+            -rpcport="$VERGE_RPC_PORT"
+          for attempt in {1..60}; do
+            if curl --silent --fail \
+              --user "$VERGE_RPC_USER:$VERGE_RPC_PASSWORD" \
+              --data-binary '{"jsonrpc":"1.0","id":"ready","method":"getblockchaininfo","params":[]}' \
+              -H 'content-type: text/plain;' \
+              "http://127.0.0.1:$VERGE_RPC_PORT/" >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat "$RUNNER_TEMP/verge-data/regtest/debug.log"
+          exit 1
+      - name: Run binding integration tests and show RPC responses
+        run: python -m pytest tests/test_verged_v26_7.py -v -s
+      - name: Show daemon log on failure
+        if: failure()
+        run: cat "$RUNNER_TEMP/verge-data/regtest/debug.log" || true

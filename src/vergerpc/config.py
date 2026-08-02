@@ -28,11 +28,11 @@ def read_config_file(filename):
     Raises :const:`IOError` if unable to open file, or :const:`ValueError`
     if an parse error occurs.
     """
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='utf-8') as f:
         text = f.read()
     cfg = dict(map(str.strip, line.split('=', 1))
                for line in map(str.strip, text.split('\n'))
-                   if '=' in line and line.startswith('#'))
+                   if '=' in line and not line.startswith(('#', ';')))
     return cfg
 
 

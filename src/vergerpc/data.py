@@ -59,19 +59,6 @@ class ServerInfo(DStruct):
     """
 
 
-class AccountInfo(DStruct):
-    """
-    Information object returned by :func:`~vergerpc.connection.VERGEConnection.listreceivedbyaccount`.
-
-    - *account* -- The account of the receiving address.
-
-    - *amount* -- Total amount received by the address.
-
-    - *confirmations* -- Number of confirmations of the most recent transaction included.
-
-    """
-
-
 class AddressInfo(DStruct):
     """
     Information object returned by :func:`~vergerpc.connection.VERGEConnection.listreceivedbyaddress`.
@@ -122,21 +109,6 @@ class AddressValidation(DStruct):
     - *ismine* -- :const:`True` if the address is in the server's wallet.
 
     - *address* -- VERGE address.
-
-    """
-
-
-class WorkItem(DStruct):
-    """
-    Information object returned by :func:`~vergerpc.connection.VERGEConnection.getwork`.
-
-    - *midstate* -- Precomputed hash state after hashing the first half of the data.
-
-    - *data* -- Block data.
-
-    - *hash1* -- Formatted hash buffer for second hash.
-
-    - *target* -- Little endian hash target.
 
     """
 

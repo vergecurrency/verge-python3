@@ -3,4 +3,6 @@
 sphinx/build
 build
 dist
-src/bitcoin_python.egg-info
+*.egg-info/
+.pytest_cache/
+__pycache__/

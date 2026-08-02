@@ -4,12 +4,11 @@
 
 A basic program that uses ``python-verge`` looks like this:
 
-First, import the library and exceptions.
+First, import the library.
 
 ::
 
     import vergerpc
-    from vergerpc.exceptions import InsufficientFunds
 
 Then, we connect to the currently running ``verge`` instance of the current user on the local machine
 with one call to
@@ -19,25 +18,14 @@ with one call to
 
     conn = vergerpc.connect_to_local()
 
-Try to move one verge from account ``testaccount`` to account ``testaccount2`` using 
-:func:`~vergerpc.connection.VERGEConnection.move`. Catch the :class:`~vergerpc.exceptions.InsufficientFunds`
-exception in the case the originating account is broke:
+Retrieve modern server information and SMSG status:
 
 ::  
 
-    try: 
-        conn.move("testaccount", "testaccount2", 100.0)
-    except InsufficientFunds,e:
-        print "Account does not have enough funds available!"
-
-
-Retrieve general server information with :func:`~vergerpc.connection.VERGEConnection.getinfo` and print some statistics:
-
-::
-
-    info = conn.getinfo()
-    print "Blocks: %i" % info.blocks
-    print "Connections: %i" % info.connections
-    print "Difficulty: %f" % info.difficulty
+    chain = conn.getblockchaininfo()
+    network = conn.getnetworkinfo()
+    print("Blocks:", chain["blocks"])
+    print("Connections:", network["connections"])
+    print("SMSG:", conn.smsginfo())
   
 

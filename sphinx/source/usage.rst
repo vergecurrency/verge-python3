@@ -24,7 +24,7 @@ VERGE again, with the command (and any parameters) as arguments. For example:
 
 ::
 
-  $ verged getinfo
+  $ verge-cli getblockchaininfo
 
 Connecting to the wallet from Python
 -------------------------------------
@@ -60,7 +60,7 @@ For basic sending and receiving of payments, the four most important methods are
   
   ::
   
-    print "Your balance is %f" % (conn.getbalance(),)
+    print("Your balance is %f" % conn.getbalance())
 
 *Check a customer address for validity and get information about it*
   This can be done with the method :func:`~vergerpc.connection.VERGEConnection.validateaddress`.
@@ -69,9 +69,9 @@ For basic sending and receiving of payments, the four most important methods are
 
       rv = conn.validateaddress(foo)
       if rv.isvalid:
-          print "The address that you provided is valid"
+          print("The address that you provided is valid")
       else:
-          print "The address that you provided is invalid, please correct"
+          print("The address that you provided is invalid, please correct")
 
 *Sending payments*
   The method :func:`~vergerpc.connection.VERGEConnection.sendtoaddress` sends a specified
@@ -89,7 +89,7 @@ For basic sending and receiving of payments, the four most important methods are
   ::
   
       pay_to = conn.getnewaddress()
-      print "We will ship the pirate sandwidth after payment of 200 coins to ", pay_to
+      print("Payment address:", pay_to)
 
 *Check how much has been received at a certain address*
   The method :func:`~vergerpc.connection.VERGEConnection.getreceivedbyaddress` 
@@ -101,20 +101,11 @@ For basic sending and receiving of payments, the four most important methods are
 
       amount = conn.getreceivedbyaddress(pay_to)
       if amount > 20000.0:
-          print "Thanks, your order will be prepared and shipped."
+          print("Thanks, your order will be prepared and shipped.")
 
-
-
-      
-The account API
--------------------------------------
-More advanced usage of verge allows multiple accounts within one wallet. This
-can be useful if you are writing software for a bank, or 
-simply want to have a clear separation between customers payments.
-
-For this, see the `Account API`_ documentation.
+Use labels through ``setlabel``, ``getaddressesbylabel``, and ``listlabels`` to
+organize wallet addresses. The deprecated account API is not exposed.
 
 .. _main bitcoin documentation: https://en.bitcoin.it/wiki/Main_Page
-.. _account API: https://en.bitcoin.it/wiki/Accounts_explained
 
 
